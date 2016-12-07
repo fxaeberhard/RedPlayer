@@ -12,7 +12,8 @@
 Dropzone.autoDiscover = false;
 
 jQuery(function($) {
-    var songs, index, audio = new Audio(),
+    var songs, index, currentSrc,
+        audio = new Audio(),
         categories = {}, // Holds song count for each category
         songHistory = [],
         songFuture = [],
@@ -30,7 +31,7 @@ jQuery(function($) {
 
         // Retrieve data from local storage
         config = JSON.parse(localStorage.getItem("config")) || config;
-        $(window).unload(function() {
+        $(window).on("unload", function() {
             localStorage.setItem("config", JSON.stringify(config));
         });
 
@@ -50,13 +51,12 @@ jQuery(function($) {
             // If no hash is present
             if (config.random) randomIndex();
             else loadSong(0);
-
         });
 
         // Buttons
         $('#play').click(togglePlay);
         $('#prev').click(prev);
-        $('#next').click(next);
+        $('#next, #overlay').click(next);
         $('#random').setClass(config.random, 'active')
             .click(function() {
                 config.random = !config.random;
@@ -414,14 +414,17 @@ jQuery(function($) {
     function initAudio() {
         var duration, onplayhead;
 
-        $(audio).on('ended', next)
+
+        $(audio).add('#video') // Select the video and the audio element
+            // .on('pause', function() {})
+            .on('ended', next)
             .on('canplaythrough', function() {
                 duration = this.duration;
             })
             .on('progress', function() {
                 try {
-                    var bufferedEnd = audio.buffered.end(audio.buffered.length - 1),
-                        duration = audio.duration;
+                    var bufferedEnd = this.buffered.end(this.buffered.length - 1),
+                        duration = this.duration;
                     if (duration > 0) {
                         $('> div:last-child', '#timeline').css('width', ((bufferedEnd / duration) * 100) + '%');
                     }
@@ -444,7 +447,7 @@ jQuery(function($) {
                 moveplayhead(e);
                 $(window).off('mousemove');
                 // change current time
-                audio.currentTime = duration * (e.pageX - $('#timeline').offset().left) / $('#timeline').width();
+                currentSrc.currentTime = duration * (e.pageX - $('#timeline').offset().left) / $('#timeline').width();
             }
             onplayhead = false;
         });
@@ -517,42 +520,48 @@ jQuery(function($) {
     function loadSong(i) {
         try {
             songHistory.push(i);
-            var wasPaused = audio && audio.paused,
-                filename = songs[i].mfilename.split('/').pop(),
-                name = songs[i].name;
+            var wasPaused = currentSrc && currentSrc.paused,
+                song = songs[i],
+                filename = song.mfilename.split('/').pop(),
+                isAudio = filename.indexOf('mp4') === -1;
 
             index = i;
 
-            audio.src = songs[index].mfilename.replace(filename, encodeURIComponent(filename));
-            audio.load();
+            currentSrc && currentSrc.pause();
 
-            $('#title').text(name);
+            currentSrc = isAudio ? audio : $('#video').get(0);
+
+            $('#overlay').css('display', isAudio ? 'none' : 'flex');
+
+            currentSrc.src = song.mfilename.replace(filename, encodeURIComponent(filename));
+            // currentSrc.load();
+
+            $('#title').text(song.name);
             $('ul .active').removeClass('active');
             $('ul li').eq(index).addClass('active').bringElIntoView();
 
             togglePlay(wasPaused);
 
-            document.title = name;
-            window.location.hash = encodeURIComponent(name);
-            // window.history && history.pushState({}, songs[index].name, "/#1");
+            document.title = song.name;
+            window.location.hash = encodeURIComponent(song.name);
+            // window.history && history.pushState({}, song.name, "/#1");
         } catch (e) {
             // Fail silently but show in F12 developer tools console
-            if (window.console) console.error('Error:' + e, songs[i]);
+            if (window.console) console.error('Error:' + e, song);
         }
     }
 
     function togglePlay(doPlay) {
         try {
-            if (doPlay === true || audio.paused) {
-                var p = audio.play()
+            var dop = doPlay === true || currentSrc.paused;
+            $('#play').toggleClass('playing', dop);
+            if (dop) {
+                var p = currentSrc.play()
                     .catch(function(e) {
-                        if (window.console) console.error('Play error:', audio.src, e);
+                        if (window.console) console.error('Play error:', currentSrc.src, e);
                     });
-
-                $('#play').addClass('playing');
             } else {
-                audio.pause();
-                $('#play').removeClass('playing');
+                currentSrc.pause();
             }
         } catch (e) {
             // Fail silently but show in F12 developer tools console
@@ -653,6 +662,8 @@ jQuery(function($) {
             $('#chat button').prop('disabled', $('#chat #text').val() === '' || $('#chat #name').val() === '');
         });
     }
+
+    // Model for song 
 
     $.fn.extend({
         toggleView: function(doShow, a, b) {

@@ -99,7 +99,7 @@ switch ($op) {
     	break;
 
 	default:
-		$files = glob("**/*.{mp3,m4a,ogg,MP3,M4A,OGG}", GLOB_BRACE); 
+		$files = glob("**/*.{mp3,m4a,ogg,MP3,M4A,OGG,mp4,MP4}", GLOB_BRACE); 
 		usort($files, 'strnatcasecmp'); 
 		$ret = array();
 		foreach ($files as $f) {

@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
-  <title>FX Player</title>
+  <title>Red Player</title>
 
   <link rel="icon" type="image/png" href="app/assets/logo.png">
 
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="bower_components/dropzone/dist/min/dropzone.min.css">
   <link rel="stylesheet" href="bower_components/tipso/src/tipso.min.css">
   <!-- <link rel="stylesheet" href="bower_components/drop/dist/css/drop-theme-arrows-bounce-dark.css"> -->
-  <link rel="stylesheet" href="bower_components/drop/dist/css/drop-theme-arrows.css">
+  <link rel="stylesheet" href="bower_components/tether-drop/dist/css/drop-theme-arrows.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -79,13 +79,17 @@
     <button disabled>Send</button>
   </div>
 
-  <script src="bower_components/lodash/lodash.min.js"></script>
+  <div id="overlay">
+    <video id="video" autoplay="on"></video>
+  </div>
+
+  <script src="bower_components/lodash/dist/lodash.min.js"></script>
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <script src="bower_components/dropzone/dist/min/dropzone.min.js"></script>
   <script src="bower_components/typeahead.js/dist/typeahead.jquery.min.js"></script>
   <script src="bower_components/tipso/src/tipso.min.js"></script>
   <script src="bower_components/tether/dist/js/tether.min.js"></script>
-  <script src="bower_components/drop/dist/js/drop.min.js"></script>
+  <script src="bower_components/tether-drop/dist/js/drop.min.js"></script>
   <script src="script.js"></script>
 
 </body>
