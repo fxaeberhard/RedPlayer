@@ -1,0 +1,26 @@
+{
+  "name": "redplayer",
+  "homepage": "https://github.com/fxaeberhard/RedPlayer",
+  "authors": [
+    "Francois-Xavier Aeberhard <fx@red-agent.com>"
+  ],
+  "description": "",
+  "main": "index.html",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "dropzone": "^4.3.0",
+    "tipso": "^1.0.8",
+    "reset-css": "^2.0.2011012603",
+    "typeahead.js": "0.11.1",
+    "tether-drop": "1.4.2",
+    "font-awesome": "^4.7.0",
+    "lodash": "^4.17.2"
+  }
+}
